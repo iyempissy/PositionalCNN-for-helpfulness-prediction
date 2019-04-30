@@ -150,14 +150,7 @@ class Pe_CNN(nn.Module):
         self.embed_dim = embed_dim
         input_channel = 1
         self.embed =nn.Embedding(embed_num, embed_dim)
-        # self.pe = PositionalEncoder(embed_dim)
-        # self.convs1 = [nn.Conv2d(Ci, Co, (K, D)) for K in Ks]
         self.convs1 = nn.ModuleList([nn.Conv2d(input_channel, kernel_num, (K, embed_dim)) for K in kernel_sizes])
-        '''
-        self.conv13 = nn.Conv2d(Ci, Co, (3, D))
-        self.conv14 = nn.Conv2d(Ci, Co, (4, D))
-        self.conv15 = nn.Conv2d(Ci, Co, (5, D))
-        '''
         self.norm_1 = Norm(embed_dim)
 
         self.dropout = nn.Dropout(dropout)
@@ -186,13 +179,6 @@ class Pe_CNN(nn.Module):
         conv_outputs = [F.max_pool1d(i, i.size(2)).squeeze(2) for i in conv_outputs]  # [(N, Co), ...]*len(Ks)
 
         feats = torch.cat(conv_outputs, 1)
-
-        '''
-        x1 = self.conv_and_pool(x,self.conv13) #(N,Co)
-        x2 = self.conv_and_pool(x,self.conv14) #(N,Co)
-        x3 = self.conv_and_pool(x,self.conv15) #(N,Co)
-        x = torch.cat((x1, x2, x3), 1) # (N,len(Ks)*Co)
-        '''
         feats_dropout = self.dropout(feats)  # (N, len(Ks)*Co)
         logit = self.fc1(feats_dropout)  # (N, C)
         # Regression layer
