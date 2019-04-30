@@ -145,7 +145,7 @@ class PositionalEncoder(nn.Module):
 # PeCNN instead of feedforward
 class Pe_CNN(nn.Module):
     # embed_dim = d_model
-    def __init__(self, heads, embed_num, embed_dim,label_num, kernel_num,kernel_sizes, dropout):
+    def __init__(self, embed_num, embed_dim,label_num, kernel_num,kernel_sizes, dropout):
         super(Pe_CNN, self).__init__()
         self.embed_dim = embed_dim
         input_channel = 1
@@ -433,7 +433,7 @@ kernel_num = 100  # no of each kind of kernel
 kernel_sizes = [3,4,5] 
 
 # Initializing model
-model = Pe_CNN(heads,embed_num, embed_dim, num_of_labels, kernel_num, kernel_sizes, dropout)
+model = Pe_CNN(embed_num, embed_dim, num_of_labels, kernel_num, kernel_sizes, dropout)
 model.embed.weight.data.copy_(pretrained_embeddings)
 if cuda:
     start.record()
